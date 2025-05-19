@@ -39,13 +39,11 @@ const frontendPath = path.join(__dirname1, "../client/dist");
 const indexHtmlPath = path.join(frontendPath, "index.html");
 
 if (process.env.NODE_ENV === "production") {
-  // Check if frontend build folder exists
-  const fs = require("fs");
-  if (fs.existsSync(frontendPath) && fs.existsSync(indexHtmlPath)) {
-    app.use(express.static(frontendPath));
-    app.get("*", (req, res) => {
-      res.sendFile(indexHtmlPath);
-    });
+  app.use(express.static(path.join(__dirname1, "../client/dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname1, "../client/dist/index.html"));
+  });
   } else {
     console.error("Frontend build files not found. Please build your frontend.");
     app.get("*", (req, res) => {
