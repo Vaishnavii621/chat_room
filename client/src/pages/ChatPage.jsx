@@ -6,7 +6,7 @@ import SideBar from "../components/SideBar";
 import axios from "../axios/axios";
 import Cookies from "js-cookie";
 import io from "socket.io-client";
-const socket = io.connect("http://localhost:5001");
+const socket = io.connect("http://localhost:5000");
 
 export const ChatPage = () => {
   const [chat, setChat] = useState([]);
