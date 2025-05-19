@@ -44,7 +44,7 @@ if (process.env.NODE_ENV === "production") {
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname1, "../client/dist/index.html"));
   });
-  } else {
+  else {
     console.error("Frontend build files not found. Please build your frontend.");
     app.get("*", (req, res) => {
       res.status(404).send("Frontend not found");
