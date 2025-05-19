@@ -3,7 +3,6 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "proxy": "http://localhost:5001",
    "scripts": {
   "install-all": "npm install --legacy-peer-deps",
   "build-only": "cross-env NODE_OPTIONS=--openssl-legacy-provider vite build",
