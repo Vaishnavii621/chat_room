@@ -50,7 +50,7 @@ if (process.env.NODE_ENV === "production") {
       res.status(404).send("Frontend not found");
     });
   }
-} else {
+ else {
   app.get("/", (req, res) => {
     res.send("API is running..");
   });
