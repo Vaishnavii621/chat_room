@@ -6,32 +6,41 @@ const auth = require("./routes/userRoute");
 const message = require("./routes/messagesRoute");
 const { authUser } = require("./middlwares/authUser");
 const path = require("path");
-require('dotenv').config({ path: path.resolve(__dirname, './.env') });
+require("dotenv").config({ path: path.resolve(__dirname, "./.env") });
 const http = require("http");
 const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
 
-// CORS for frontend URL
-app.use(cors({
-  origin: ["http://localhost:5173"], // Change this if frontend URL changes
-  credentials: true,
-}));
+// Dynamic CORS for development only
+const allowedOrigins =
+  process.env.NODE_ENV === "production"
+    ? [] // In production, frontend is served by Express
+    : ["http://localhost:5173"];
+
+app.use(
+  cors({
+    origin: allowedOrigins.length ? allowedOrigins : undefined,
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(cookieParser());
 
-// Routes
+// API Routes
 app.use("/api/v1/", auth);
 app.use("/api/v1/chat/", authUser, message);
 
-// Serve frontend in production
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, 'client/dist')));
+// Serve frontend (in production)
+const __dirname1 = path.resolve();
 
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client/dist/index.html'));
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname1, "../client/dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname1, "../client/dist/index.html"));
   });
 } else {
   app.get("/", (req, res) => {
@@ -39,6 +48,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
+// Start server and connect DB
 const PORT = process.env.PORT || 5000;
 
 const start = async () => {
@@ -57,9 +67,9 @@ start();
 // Socket.IO setup
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173"], // Match this with frontend origin
-    methods: ["GET", "POST"]
-  }
+    origin: allowedOrigins.length ? allowedOrigins : "*",
+    methods: ["GET", "POST"],
+  },
 });
 
 let onlineUsers = [];
@@ -76,7 +86,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("user-loggedout", (username) => {
-    onlineUsers = onlineUsers.filter(usr => usr !== username);
+    onlineUsers = onlineUsers.filter((usr) => usr !== username);
     io.emit("users-online", onlineUsers);
   });
 
@@ -85,7 +95,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    onlineUsers = onlineUsers.filter(user => user !== socket.id);
+    onlineUsers = onlineUsers.filter((user) => user !== socket.id);
     io.emit("users-online", onlineUsers);
   });
 });
+
