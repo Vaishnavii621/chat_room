@@ -44,17 +44,13 @@ if (process.env.NODE_ENV === "production") {
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname1, "../client/dist/index.html"));
   });
+}
   else {
     console.error("Frontend build files not found. Please build your frontend.");
     app.get("*", (req, res) => {
       res.status(404).send("Frontend not found");
     });
   }
- else {
-  app.get("/", (req, res) => {
-    res.send("API is running..");
-  });
-}
 
 
 // Start server and connect DB
@@ -108,4 +104,3 @@ io.on("connection", (socket) => {
     io.emit("users-online", onlineUsers);
   });
 });
-
