@@ -3,7 +3,10 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { BsBoxArrowLeft } from "react-icons/bs";
 import io from "socket.io-client";
-const socket = io(import.meta.env.VITE_SOCKET_URL);
+const socket = io(
+  import.meta.env.PROD ? window.location.origin : "http://localhost:5000"
+);
+
 
 const Header = () => {
   const navigate = useNavigate();
