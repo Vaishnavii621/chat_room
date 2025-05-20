@@ -10,11 +10,18 @@ export const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+   
     try {
-      const res = await api.post("/register", {
-        username,
-        password,
-      });
+       const BASE_URL = import.meta.env.PROD
+  ? "https://chatroom-backend.onrender.com/api/v1" // Replace with your actual Render backend URL
+  : "http://localhost:5000/api/v1";
+
+const res = await axios.post(`${BASE_URL}/register`, {
+  username,
+  password,
+}, {
+  withCredentials: true,
+});
 
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
