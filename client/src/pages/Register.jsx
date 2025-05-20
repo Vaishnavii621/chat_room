@@ -1,7 +1,6 @@
-
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import api from "../axios"; // Adjust path as necessary
 
 export const Register = () => {
   const [username, setUsername] = useState("");
@@ -9,27 +8,27 @@ export const Register = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await axios.post("register", {
-      username,
-      password,
-    });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await api.post("/register", {
+        username,
+        password,
+      });
 
-    if (res.data.token) {
-      localStorage.setItem("token", res.data.token);
-      navigate("/");
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+        navigate("/");
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || "Registration failed");
     }
-  } catch (error) {
-    setError(error.response?.data?.message || "Registration failed");
-  }
-};
+  };
+
   return (
     <div className="background">
       <form onSubmit={handleSubmit} className="form-card" autoComplete="off">
         <div className="form-title">Welcome</div>
-
         <div className="form-subtitle">Register</div>
 
         <div className="auth">
@@ -61,7 +60,7 @@ export const Register = () => {
             Register
           </button>
         </div>
-        
+
         {error && (
           <p className="text-center mt-4" style={{ color: "red" }}>
             {error}
